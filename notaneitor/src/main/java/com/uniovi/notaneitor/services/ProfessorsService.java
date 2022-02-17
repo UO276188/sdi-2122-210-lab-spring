@@ -1,39 +1,42 @@
 package com.uniovi.notaneitor.services;
 
 import com.uniovi.notaneitor.entities.Professor;
+import com.uniovi.notaneitor.repositories.ProfessorsRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
 public class ProfessorsService {
-    private List<Professor> professorsList = new LinkedList<>();
+
+    @Autowired
+    private ProfessorsRepository professorsRepository;
 
     @PostConstruct
     public void init(){
-        professorsList.add(new Professor(1L, "1M", "Sara", "Ramirez", "Music"));
-        professorsList.add(new Professor(2L, "2M", "Celia", "Suarez", "Art"));
-        professorsList.add(new Professor(3L, "4M", "Paco", "Paco", "Asociado"));
+        professorsRepository.save(new Professor(1L, "1M", "Sara", "Ramirez", "Music"));
+        professorsRepository.save(new Professor(2L, "2M", "Celia", "Suarez", "Art"));
+        professorsRepository.save(new Professor(3L, "4M", "Paco", "Paco", "Asociado"));
     }
 
     public List<Professor> getProfessors(){
-        return professorsList;
+        List<Professor> professors = new ArrayList<>();
+        professorsRepository.findAll().forEach(professors::add);
+        return professors;
     }
 
     public Professor getProfessor(Long id){
-        return professorsList.stream().filter(t -> t.getId().equals(id)).findFirst().get();
+        return professorsRepository.findById(id).get();
     }
 
     public void addProfessor(Professor professor){
-        if (professor.getId() == null){
-            professor.setId(professorsList.get(professorsList.size() -1).getId()+1);
-        }
-        professorsList.add(professor);
+        professorsRepository.save(professor);
     }
 
     public void deleteProfessor(Long id){
-        professorsList.removeIf(t -> t.getId().equals(id));
+        professorsRepository.deleteById(id);
     }
 }

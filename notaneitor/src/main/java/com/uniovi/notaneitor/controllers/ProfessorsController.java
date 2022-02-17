@@ -1,15 +1,14 @@
 package com.uniovi.notaneitor.controllers;
 
-import com.uniovi.notaneitor.entities.Professor;
 import com.uniovi.notaneitor.services.ProfessorsService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class ProfessorsController {
+
     @Autowired
     private ProfessorsService professorsService;
 
@@ -20,7 +19,7 @@ public class ProfessorsController {
 
     @RequestMapping("/professor/details/{id}")
     public String getDetail(@PathVariable Long id){
-        return "Details " + professorsService.getProffesor(id).toString();
+        return "Details " + professorsService.getProfessor(id).toString();
     }
 
     @RequestMapping("/professor/delete/{id}")
@@ -31,6 +30,6 @@ public class ProfessorsController {
 
     @RequestMapping("/professor/edit/{id}")
     public String edit(@PathVariable Long id){
-        return "Editing " + professorsService.getProffesor(id);
+        return "Editing " + professorsService.getProfessor(id);
     }
 }
