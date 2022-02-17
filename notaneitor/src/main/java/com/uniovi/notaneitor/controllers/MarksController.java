@@ -8,7 +8,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
-public class MarksControllers {
+public class MarksController {
 
     @Autowired //Inyectar el servicio
     private MarksService marksService;
@@ -52,5 +52,11 @@ public class MarksControllers {
     public String setEdit(@ModelAttribute Mark mark, @PathVariable Long id){
         mark.setId(id); marksService.addMark(mark);
         return "redirect:/mark/details/"+id;
+    }
+
+    @RequestMapping("/mark/list/update")
+    public String updateList(Model model){
+        model.addAttribute("markList", marksService.getMarks() );
+        return "mark/list :: tableMarks";
     }
 }
