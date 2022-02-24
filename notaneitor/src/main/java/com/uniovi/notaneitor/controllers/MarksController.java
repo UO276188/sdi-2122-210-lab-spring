@@ -3,9 +3,12 @@ package com.uniovi.notaneitor.controllers;
 import com.uniovi.notaneitor.entities.Mark;
 import com.uniovi.notaneitor.services.MarksService;
 import com.uniovi.notaneitor.services.UsersService;
+import com.uniovi.notaneitor.validation.MarksFormValidation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
@@ -17,6 +20,9 @@ public class MarksController {
     @Autowired
     private UsersService usersService;
 
+    @Autowired
+    private MarksFormValidation marksFormValidation;
+
     @RequestMapping("/mark/list")
     public String getList(Model model){
         model.addAttribute("markList", marksService.getMarks());
@@ -24,12 +30,18 @@ public class MarksController {
     }
 
     @RequestMapping(value = "/mark/add",method = RequestMethod.POST)
-    public String setMark(@ModelAttribute Mark mark){
+    public String setMark(@Validated Mark mark, BindingResult result) {
+        marksFormValidation.validate(mark, result);
+        if (result.hasErrors()) {
+            return "mark/add";
+        }
         marksService.addMark(mark);
         return "redirect:/mark/list";
     }
+
     @RequestMapping(value = "/mark/add")
     public String getMark(Model model) {
+        model.addAttribute("mark", new Mark());
         model.addAttribute("usersList", usersService.getUsers());
         return "mark/add";
     }
