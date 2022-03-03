@@ -1,6 +1,7 @@
 package com.uniovi.notaneitor.services;
 
 import com.uniovi.notaneitor.entities.Mark;
+import com.uniovi.notaneitor.entities.Professor;
 import com.uniovi.notaneitor.entities.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,11 +16,14 @@ public class InsertSampleDataService {
     private UsersService usersService;
 
     @Autowired
+    private ProfessorsService professorsService;
+
+    @Autowired
     private RolesService rolesService;
 
     @PostConstruct
     public void init() {
-        User user1 = new User("99999990A", "Pedro", "Díaz");
+        User user1 = new User("99999990A", "Pedro", "Díaz"); //Alumno
         user1.setPassword("123456");
         user1.setRole(rolesService.getRoles()[0]);
         User user2 = new User("99999991B", "Lucas", "Núñez");
@@ -31,10 +35,10 @@ public class InsertSampleDataService {
         User user4 = new User("99999993D", "Marta", "Almonte");
         user4.setPassword("123456");
         user4.setRole(rolesService.getRoles()[1]);
-        User user5 = new User("99999977E", "Pelayo", "Valdes");
+        User user5 = new User("99999977E", "Pelayo", "Valdes");//Profesor
         user5.setPassword("123456");
         user5.setRole(rolesService.getRoles()[1]);
-        User user6 = new User("99999988F", "Edward", "Núñez");
+        User user6 = new User("99999988F", "Edward", "Núñez");//ADMIN
         user6.setPassword("123456");
         user6.setRole(rolesService.getRoles()[2]);
 
@@ -83,5 +87,15 @@ public class InsertSampleDataService {
         usersService.addUser(user4);
         usersService.addUser(user5);
         usersService.addUser(user6);
+
+        Professor professor1 = new Professor("99999991W", "Paco", "González", "Science");
+        Professor professor2 = new Professor("99999991X", "Juan", "Pérez", "Music");
+        Professor professor3 = new Professor("99999991Y", "Conchi", "Jiménez", "Plastica");
+        Professor professor4 = new Professor("99999991Z", "Dani", "Gayo", "Maths");
+
+        professorsService.addProfessor(professor1);
+        professorsService.addProfessor(professor2);
+        professorsService.addProfessor(professor3);
+        professorsService.addProfessor(professor4);
     }
 }
