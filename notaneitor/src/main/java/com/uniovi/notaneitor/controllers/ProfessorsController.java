@@ -1,35 +1,70 @@
 package com.uniovi.notaneitor.controllers;
 
+import com.uniovi.notaneitor.entities.Professor;
 import com.uniovi.notaneitor.services.ProfessorsService;
+import com.uniovi.notaneitor.validation.ProfessorValidator;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
-@RestController
+@Controller
 public class ProfessorsController {
 
-    @Autowired
-    private ProfessorsService professorsService;
+        @Autowired
+        private ProfessorsService professorsService;
 
-    @RequestMapping("/professor/add")
-    public String setProfessor(){
-        return "Formulario para añadir profesor.";
-    }
+        @Autowired
+        private ProfessorValidator professorValidator;
 
-    @RequestMapping("/professor/details/{id}")
-    public String getDetail(@PathVariable Long id){
-        return "Details " + professorsService.getProfessor(id).toString();
-    }
+        @RequestMapping("/professor/list")
+        public String getList(Model model){
+            model.addAttribute("professorsList", professorsService.getProfessors());
+            return "professor/list";
+        }
 
-    @RequestMapping("/professor/delete/{id}")
-    public String deleteProfessor(@PathVariable Long id){
-        professorsService.deleteProfessor(id);
-        return "Deleted " + id;
-    }
+        @RequestMapping(value = "/professor/add")
+        public String getProfessor(Model model) {
+            model.addAttribute("professor", new Professor());
+            return "professor/add";
+        }
 
-    @RequestMapping("/professor/edit/{id}")
-    public String edit(@PathVariable Long id){
-        return "Editing " + professorsService.getProfessor(id);
-    }
+        @RequestMapping(value= "/professor/add", method = RequestMethod.POST)
+        public String setProfessor(@Validated Professor professor, BindingResult result) {
+            professorValidator.validate(professor, result);
+            if(result.hasErrors()){
+                return "professor/add";
+            }
+            professorsService.addProfessor(professor);
+            return "redirect:/professor/list";
+        }
+
+        @RequestMapping("/professor/details/{id}")
+        public String getDetail(Model model, @PathVariable Long id) {
+            model.addAttribute("professor", professorsService.getProfessor(id));
+            return "professor/details";
+        }
+
+        @RequestMapping("/professor/delete/{id}")
+        public String deleteProfessor(@PathVariable Long id){
+            professorsService.deleteProfessor(id);
+            return "redirect:/professor/list";
+        }
+
+        @RequestMapping(value = "/professor/edit/{id}")
+        public String getEdit(Model model, @PathVariable Long id) {
+            model.addAttribute("professor", professorsService.getProfessor(id));
+            return "professor/edit";
+        }
+
+        @RequestMapping(value="/professor/edit", method=RequestMethod.POST)
+        public String setEdit(@ModelAttribute Professor professor) {
+            System.out.println(professor.getId());
+            professorsService.addProfessor(professor);
+            System.out.println(professor.getId());
+            return "redirect:/professor/details/" + professor.getId();
+        }
+
 }
