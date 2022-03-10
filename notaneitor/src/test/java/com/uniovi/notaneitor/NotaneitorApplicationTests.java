@@ -324,4 +324,88 @@ class NotaneitorApplicationTests {
         String loginText = PO_HomeView.getP().getString("signup.message", PO_Properties.getSPANISH());
         PO_PrivateView.clickOption(driver, "logout", "text", loginText);
     }
+
+//COMPLEMENTARIO
+    @Test
+    @Order(18)
+    public void prueba12() {
+        PO_LoginView.login(driver, "99999990A", "123456", "Notas del usuario");
+
+        //Contamos el número de filas de notas
+        List<WebElement> markList = SeleniumUtils.waitLoadElementsBy(driver, "free", "//tbody/tr", PO_View.getTimeout());
+        Assertions.assertEquals(4, markList.size());
+
+        PO_LoginView.logout(driver);
+    }
+
+    @Test
+    @Order(19)
+    public void prueba13() {
+        PO_LoginView.login(driver, "99999990A", "123456", "Notas del usuario");
+
+        SeleniumUtils.waitSeconds(driver, 1);
+        // Contamos las notas
+        By enlace = By.xpath("//td[contains(text(), 'Nota A2')]/following-sibling::*[2]");
+        driver.findElement(enlace).click();
+        //Esperamos por la ventana de detalle
+        String checkText = "Detalles de la nota";
+        List<WebElement> result = PO_View.checkElementBy(driver, "text", checkText);
+        Assertions.assertEquals(checkText,result.get(0).getText());
+
+       PO_LoginView.logout(driver);
+    }
+
+    @Test
+    @Order(20)
+    public void prueba14() {
+        PO_LoginView.login(driver, "99999993D", "123456", "99999993D");
+
+        //Pinchamos en la opción de menú de Notas: //li[contains(@id, 'marks-menu')]/a
+        List<WebElement> elements = PO_View.checkElementBy(driver, "free", "//li[contains(@id, 'marks-menu')]/a");
+        elements.get(0).click();
+
+        //Esperamos a que aparezca la opción de añadir nota: //a[contains(@href, 'mark/add')]
+        elements = PO_View.checkElementBy(driver, "free", "//a[contains(@href, 'mark/add')]");
+        //Pinchamos en agregar Nota.
+        elements.get(0).click();
+
+        //Ahora vamos a rellenar la nota. //option[contains(@value, '4')]
+        String checkText = "Nota Nueva 1";
+        PO_PrivateView.fillFormAddMark(driver, 3, checkText, "8");
+
+        PO_PrivateView.pagination(driver, 3);
+
+        //Comprobamos que aparece la nota en la página
+        elements = PO_View.checkElementBy(driver, "text", checkText);
+        Assertions.assertEquals(checkText, elements.get(0).getText());
+
+        PO_LoginView.logout(driver);
+    }
+
+    @Test
+    @Order(21)
+    public void prueba15() {
+        PO_LoginView.login(driver, "99999993D", "123456", "99999993D");
+
+        //Pinchamos en la opción de menu de Notas: //li[contains(@id, 'marks-menu')]/a
+        List<WebElement>  elements = PO_View.checkElementBy(driver, "free", "//li[contains(@id, 'marks-menu')]/a");
+        elements.get(0).click();
+        //Pinchamos en la opción de lista de notas.
+        elements = PO_View.checkElementBy(driver, "free", "//a[contains(@href, 'mark/list')]");
+        elements.get(0).click();
+
+        PO_PrivateView.pagination(driver, 3);
+
+        //Esperamos a que aparezca la Nueva nota en la ultima pagina
+        //Y Pinchamos en el enlace de borrado de la Nota "Nota Nueva 1"
+        elements = PO_View.checkElementBy(driver, "free", "//td[contains(text(), 'Nota Nueva 1')]/following-sibling::*/a[contains(@href, 'mark/delete')]");
+        elements.get(0).click();
+
+        PO_PrivateView.pagination(driver, 3);
+
+        //Y esperamos a que NO aparezca la ultima "Nueva Nota 1"
+        SeleniumUtils.waitTextIsNotPresentOnPage(driver, "Nota Nueva 1",PO_View.getTimeout());
+
+        PO_LoginView.logout(driver);
+    }
 }
